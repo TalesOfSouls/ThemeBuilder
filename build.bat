@@ -1,5 +1,4 @@
-cls
-set "EXE_NAME=theme_builder_win32"
+set "EXE_NAME=theme_builder"
 set "DESTINATION_DIR=..\build\themebuilder"
 
 IF NOT EXIST ..\build mkdir ..\build

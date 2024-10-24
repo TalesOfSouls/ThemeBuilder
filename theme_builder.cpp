@@ -11,6 +11,9 @@
     #include <limits.h>
 #endif
 
+#include "../GameEngine/log/Debug.h"
+#include "../GameEngine/log/Debug.cpp"
+
 #include "../GameEngine/ui/UITheme.h"
 #include "../GameEngine/utils/StringUtils.h"
 
@@ -50,7 +53,10 @@ void iter_directories_recursive(RingMemory* ring, const char *dir_path) {
                     printf("Found .themetxt file: %s\n", abs_path);
 
                     themes[theme_index].data = (byte *) calloc(10, MEGABYTE);
-                    theme_from_file_txt(ring, abs_path, themes + theme_index);
+
+                    FileBody file;
+                    file_read(abs_path, &file, ring);
+                    theme_from_file_txt(themes + theme_index, file.content);
 
                     char new_path[MAX_PATH];
                     str_replace(abs_path, ".themetxt", ".themebin", new_path);
@@ -99,7 +105,10 @@ void iter_directories_recursive(RingMemory* ring, const char *dir_path) {
                     printf("Found .themetxt file: %s\n", abs_path);
 
                     themes[theme_index].data = (byte *) calloc(10, MEGABYTE);
-                    theme_from_file_txt(ring, abs_path, themes + theme_index);
+
+                    FileBody file;
+                    file_read(abs_path, &file, ring);
+                    theme_from_file_txt(themes + theme_index, file.content);
 
                     char new_path[MAX_PATH];
                     str_replace(abs_path, ".themetxt", ".themebin", new_path);
