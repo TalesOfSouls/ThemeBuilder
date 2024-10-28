@@ -1,5 +1,5 @@
 set "EXE_NAME=theme_builder"
-set "DESTINATION_DIR=..\build\themebuilder"
+set "DESTINATION_DIR=..\build\theme_builder"
 
 IF NOT EXIST ..\build mkdir ..\build
 IF NOT EXIST "%DESTINATION_DIR%" mkdir "%DESTINATION_DIR%"
