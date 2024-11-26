@@ -11,7 +11,6 @@
     #include <limits.h>
 #endif
 
-#include "../GameEngine/log/Debug.h"
 #include "../GameEngine/log/Debug.cpp"
 
 #include "../GameEngine/ui/UITheme.h"
