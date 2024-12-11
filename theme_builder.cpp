@@ -11,6 +11,7 @@
     #include <limits.h>
 #endif
 
+#include "debug.h"
 #include "../GameEngine/log/Debug.cpp"
 
 #include "../GameEngine/ui/UITheme.h"
@@ -52,16 +53,18 @@ void iter_directories_recursive(RingMemory* ring, const char *dir_path) {
                     printf("Found .themetxt file: %s\n", abs_path);
 
                     themes[theme_index].data = (byte *) calloc(10, MEGABYTE);
+                    theme_from_file_txt(&themes[theme_index], abs_path, ring);
 
-                    FileBody file;
-                    file_read(abs_path, &file, ring);
-                    theme_from_file_txt(themes + theme_index, file.content);
+                    FileBody output;
+                    output.content = (byte *) calloc(10, MEGABYTE);
+                    output.size = theme_to_data(&themes[theme_index], output.content);
 
                     char new_path[MAX_PATH];
                     str_replace(abs_path, ".themetxt", ".themebin", new_path);
-                    theme_to_file(ring, new_path, themes + theme_index);
+                    file_write(new_path, &output);
 
                     free(themes[theme_index].data);
+                    free(output.content);
 
                     ++theme_index;
                 }
@@ -104,16 +107,18 @@ void iter_directories_recursive(RingMemory* ring, const char *dir_path) {
                     printf("Found .themetxt file: %s\n", abs_path);
 
                     themes[theme_index].data = (byte *) calloc(10, MEGABYTE);
+                    theme_from_file_txt(themes + theme_index, abs_path, ring);
 
-                    FileBody file;
-                    file_read(abs_path, &file, ring);
-                    theme_from_file_txt(themes + theme_index, file.content);
+                    FileBody output;
+                    output.content = (byte *) calloc(10, MEGABYTE);
+                    theme_to_data(themes + theme_index, output.content);
 
                     char new_path[MAX_PATH];
                     str_replace(abs_path, ".themetxt", ".themebin", new_path);
-                    theme_to_file(ring, new_path, themes + theme_index);
+                    file_write(new_path, &output);
 
                     free(themes[theme_index].data);
+                    free(output.content);
 
                     ++theme_index;
                 }
