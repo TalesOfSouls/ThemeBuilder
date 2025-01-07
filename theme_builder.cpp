@@ -2,6 +2,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+#define RELEASE 1
+
 #if _WIN32
     #include <windows.h>
 #else
@@ -32,6 +34,7 @@ void iter_directories_recursive(RingMemory* ring, const char *dir_path) {
     hFind = FindFirstFileA(searchPath, &findFileData);
     if (hFind == INVALID_HANDLE_VALUE) {
         fprintf(stderr, "FindFirstFile failed (%d)\n", GetLastError());
+        fprintf(stderr, "%s\n", searchPath);
         return;
     }
 
