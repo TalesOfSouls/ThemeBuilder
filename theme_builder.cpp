@@ -17,10 +17,13 @@
 #include "../GameEngine/log/Debug.cpp"
 
 #include "../GameEngine/ui/UITheme.h"
+#include "../GameEngine/ui/UILayout.h"
 #include "../GameEngine/utils/StringUtils.h"
 
 UIThemeStyle* themes;
+UILayout* layouts;
 int theme_index = 0;
+int layout_index = 0;
 
 #if _WIN32
 void iter_directories_recursive(RingMemory* ring, const char *dir_path) {
@@ -70,6 +73,27 @@ void iter_directories_recursive(RingMemory* ring, const char *dir_path) {
                     free(output.content);
 
                     ++theme_index;
+                }
+            } else if (ext && strcmp(ext, ".layouttxt") == 0) {
+                char abs_path[MAX_PATH];
+                if (GetFullPathNameA(path, sizeof(abs_path), abs_path, NULL)) {
+                    printf("Found .layouttxt file: %s\n", abs_path);
+
+                    layouts[layout_index].data = (byte *) calloc(10, MEGABYTE);
+                    layout_from_file_txt(&layouts[layout_index], abs_path, ring);
+
+                    FileBody output;
+                    output.content = (byte *) calloc(10, MEGABYTE);
+                    output.size = layout_to_data(&layouts[layout_index], output.content);
+
+                    char new_path[MAX_PATH];
+                    str_replace(abs_path, ".layouttxt", ".layoutbin", new_path);
+                    file_write(new_path, &output);
+
+                    free(layouts[layout_index].data);
+                    free(output.content);
+
+                    ++layout_index;
                 }
             }
         }
@@ -125,6 +149,27 @@ void iter_directories_recursive(RingMemory* ring, const char *dir_path) {
 
                     ++theme_index;
                 }
+            } else if (ext && strcmp(ext, ".layouttxt") == 0) {
+                char abs_path[PATH_MAX];
+                if (realpath(path, abs_path)) {
+                    printf("Found .layouttxt file: %s\n", abs_path);
+
+                    layouts[layout_index].data = (byte *) calloc(10, MEGABYTE);
+                    layout_from_file_txt(layouts + layout_index, abs_path, ring);
+
+                    FileBody output;
+                    output.content = (byte *) calloc(10, MEGABYTE);
+                    layout_to_data(layouts + layout_index, output.content);
+
+                    char new_path[MAX_PATH];
+                    str_replace(abs_path, ".layouttxt", ".layoutbin", new_path);
+                    file_write(new_path, &output);
+
+                    free(layouts[layout_index].data);
+                    free(output.content);
+
+                    ++layout_index;
+                }
             }
         }
     }
@@ -147,7 +192,11 @@ int main(int argc, char *argv[])
     int theme_count = 1000;
     themes = (UIThemeStyle *) malloc(sizeof(UIThemeStyle) * theme_count);
 
+    int layout_count = 1000;
+    layouts = (UILayout *) malloc(sizeof(UILayout) * layout_count);
+
     iter_directories_recursive(&memory_volatile, argv[1]);
 
+    printf("Layouts %d\n", layout_index);
     printf("Themes %d\n", theme_index);
 }
