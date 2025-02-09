@@ -13,11 +13,11 @@
     #include <limits.h>
 #endif
 
-#include "debug.h"
 #include "../GameEngine/log/Debug.cpp"
 
 #include "../GameEngine/ui/UITheme.h"
 #include "../GameEngine/ui/UILayout.h"
+#include "../GameEngine/ui/UILayout.cpp"
 #include "../GameEngine/utils/StringUtils.h"
 
 UIThemeStyle* themes;
@@ -61,7 +61,7 @@ void iter_directories_recursive(RingMemory* ring, const char *dir_path) {
                     themes[theme_index].data = (byte *) calloc(10, MEGABYTE);
                     theme_from_file_txt(&themes[theme_index], abs_path, ring);
 
-                    FileBody output;
+                    FileBody output = {};
                     output.content = (byte *) calloc(10, MEGABYTE);
                     output.size = theme_to_data(&themes[theme_index], output.content);
 
@@ -82,7 +82,7 @@ void iter_directories_recursive(RingMemory* ring, const char *dir_path) {
                     layouts[layout_index].data = (byte *) calloc(10, MEGABYTE);
                     layout_from_file_txt(&layouts[layout_index], abs_path, ring);
 
-                    FileBody output;
+                    FileBody output = {};
                     output.content = (byte *) calloc(10, MEGABYTE);
                     output.size = layout_to_data(&layouts[layout_index], output.content);
 
@@ -136,7 +136,7 @@ void iter_directories_recursive(RingMemory* ring, const char *dir_path) {
                     themes[theme_index].data = (byte *) calloc(10, MEGABYTE);
                     theme_from_file_txt(themes + theme_index, abs_path, ring);
 
-                    FileBody output;
+                    FileBody output = {};
                     output.content = (byte *) calloc(10, MEGABYTE);
                     theme_to_data(themes + theme_index, output.content);
 
@@ -157,7 +157,7 @@ void iter_directories_recursive(RingMemory* ring, const char *dir_path) {
                     layouts[layout_index].data = (byte *) calloc(10, MEGABYTE);
                     layout_from_file_txt(layouts + layout_index, abs_path, ring);
 
-                    FileBody output;
+                    FileBody output = {};
                     output.content = (byte *) calloc(10, MEGABYTE);
                     layout_to_data(layouts + layout_index, output.content);
 
