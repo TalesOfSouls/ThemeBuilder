@@ -13,8 +13,6 @@
     #include <limits.h>
 #endif
 
-#include "../GameEngine/log/Debug.cpp"
-
 #include "../GameEngine/ui/UITheme.h"
 #include "../GameEngine/ui/UILayout.h"
 #include "../GameEngine/ui/UILayout.cpp"
