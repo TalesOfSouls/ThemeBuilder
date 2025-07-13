@@ -13,10 +13,10 @@
     #include <limits.h>
 #endif
 
-#include "../GameEngine/ui/UITheme.h"
-#include "../GameEngine/ui/UILayout.h"
-#include "../GameEngine/ui/UILayout.cpp"
-#include "../GameEngine/utils/StringUtils.h"
+#include "../cOMS/ui/UITheme.h"
+#include "../cOMS/ui/UILayout.h"
+#include "../cOMS/ui/UILayout.cpp"
+#include "../cOMS/utils/StringUtils.h"
 
 UIThemeStyle* themes;
 UILayout* layouts;
