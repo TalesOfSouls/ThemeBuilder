@@ -13,7 +13,7 @@
     #include <limits.h>
 #endif
 
-#include "../cOMS/ui/UITheme.h"
+#include "../cOMS/ui/UITheme.cpp"
 #include "../cOMS/ui/UILayout.h"
 #include "../cOMS/ui/UILayout.cpp"
 #include "../cOMS/utils/StringUtils.h"
@@ -24,11 +24,11 @@ int theme_index = 0;
 int layout_index = 0;
 
 #if _WIN32
-void iter_directories_recursive(RingMemory* ring, const char *dir_path) {
+void iter_directories_recursive(RingMemory* const ring, const char *dir_path) {
     WIN32_FIND_DATAA findFileData;
     HANDLE hFind = INVALID_HANDLE_VALUE;
-    char path[MAX_PATH];
-    char searchPath[MAX_PATH];
+    char path[PATH_MAX_LENGTH];
+    char searchPath[PATH_MAX_LENGTH];
 
     snprintf(searchPath, sizeof(searchPath), "%s\\*", dir_path);
 
@@ -52,18 +52,18 @@ void iter_directories_recursive(RingMemory* ring, const char *dir_path) {
             const char *ext = strrchr(findFileData.cFileName, '.');
 
             if (ext && strcmp(ext, ".themetxt") == 0) {
-                char abs_path[MAX_PATH];
+                char abs_path[PATH_MAX_LENGTH];
                 if (GetFullPathNameA(path, sizeof(abs_path), abs_path, NULL)) {
                     printf("Found .themetxt file: %s\n", abs_path);
 
                     themes[theme_index].data = (byte *) calloc(10, MEGABYTE);
                     theme_from_file_txt(&themes[theme_index], abs_path, ring);
 
-                    FileBody output = {};
+                    FileBody output = {0};
                     output.content = (byte *) calloc(10, MEGABYTE);
                     output.size = theme_to_data(&themes[theme_index], output.content);
 
-                    char new_path[MAX_PATH];
+                    char new_path[PATH_MAX_LENGTH];
                     str_replace(abs_path, ".themetxt", ".themebin", new_path);
                     file_write(new_path, &output);
 
@@ -73,18 +73,18 @@ void iter_directories_recursive(RingMemory* ring, const char *dir_path) {
                     ++theme_index;
                 }
             } else if (ext && strcmp(ext, ".layouttxt") == 0) {
-                char abs_path[MAX_PATH];
+                char abs_path[PATH_MAX_LENGTH];
                 if (GetFullPathNameA(path, sizeof(abs_path), abs_path, NULL)) {
                     printf("Found .layouttxt file: %s\n", abs_path);
 
                     layouts[layout_index].data = (byte *) calloc(10, MEGABYTE);
                     layout_from_file_txt(&layouts[layout_index], abs_path, ring);
 
-                    FileBody output = {};
+                    FileBody output = {0};
                     output.content = (byte *) calloc(10, MEGABYTE);
                     output.size = layout_to_data(&layouts[layout_index], output.content);
 
-                    char new_path[MAX_PATH];
+                    char new_path[PATH_MAX_LENGTH];
                     str_replace(abs_path, ".layouttxt", ".layoutbin", new_path);
                     file_write(new_path, &output);
 
@@ -100,7 +100,7 @@ void iter_directories_recursive(RingMemory* ring, const char *dir_path) {
     FindClose(hFind);
 }
 #else
-void iter_directories_recursive(RingMemory* ring, const char *dir_path) {
+void iter_directories_recursive(RingMemory* const ring, const char *dir_path) {
     struct dirent *entry;
     DIR *dir = opendir(dir_path);
 
@@ -110,7 +110,7 @@ void iter_directories_recursive(RingMemory* ring, const char *dir_path) {
     }
 
     while ((entry = readdir(dir)) != NULL) {
-        char path[PATH_MAX];
+        char path[PATH_MAX_LENGTH];
         struct stat statbuf;
 
         if (entry->d_name == '.') {
@@ -127,18 +127,18 @@ void iter_directories_recursive(RingMemory* ring, const char *dir_path) {
         } else if (S_ISREG(statbuf.st_mode)) {
             const char *ext = strrchr(entry->d_name, '.');
             if (ext && strcmp(ext, ".themetxt") == 0) {
-                char abs_path[PATH_MAX];
+                char abs_path[PATH_MAX_LENGTH];
                 if (realpath(path, abs_path)) {
                     printf("Found .themetxt file: %s\n", abs_path);
 
                     themes[theme_index].data = (byte *) calloc(10, MEGABYTE);
                     theme_from_file_txt(themes + theme_index, abs_path, ring);
 
-                    FileBody output = {};
+                    FileBody output = {0};
                     output.content = (byte *) calloc(10, MEGABYTE);
                     theme_to_data(themes + theme_index, output.content);
 
-                    char new_path[MAX_PATH];
+                    char new_path[PATH_MAX_LENGTH];
                     str_replace(abs_path, ".themetxt", ".themebin", new_path);
                     file_write(new_path, &output);
 
@@ -148,18 +148,18 @@ void iter_directories_recursive(RingMemory* ring, const char *dir_path) {
                     ++theme_index;
                 }
             } else if (ext && strcmp(ext, ".layouttxt") == 0) {
-                char abs_path[PATH_MAX];
+                char abs_path[PATH_MAX_LENGTH];
                 if (realpath(path, abs_path)) {
                     printf("Found .layouttxt file: %s\n", abs_path);
 
                     layouts[layout_index].data = (byte *) calloc(10, MEGABYTE);
                     layout_from_file_txt(layouts + layout_index, abs_path, ring);
 
-                    FileBody output = {};
+                    FileBody output = {0};
                     output.content = (byte *) calloc(10, MEGABYTE);
                     layout_to_data(layouts + layout_index, output.content);
 
-                    char new_path[MAX_PATH];
+                    char new_path[PATH_MAX_LENGTH];
                     str_replace(abs_path, ".layouttxt", ".layoutbin", new_path);
                     file_write(new_path, &output);
 
@@ -183,7 +183,7 @@ int main(int argc, char *argv[])
         return EXIT_FAILURE;
     }
 
-    RingMemory memory_volatile = {};
+    RingMemory memory_volatile = {0};
     memory_volatile.memory = (byte *) malloc(sizeof(byte) * MEGABYTE * 128);
     memory_volatile.size = sizeof(byte) * MEGABYTE * 128;
 
