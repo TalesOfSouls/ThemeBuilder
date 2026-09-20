@@ -53,14 +53,17 @@ int main(int argc, char *argv[])
 
     char* extension = strrchr(argv[1], '.');
 
+    char argv_path[PATH_MAX_LENGTH];
+    relative_to_absolute(argv[1], argv_path);
+
     if (strncmp(extension, ".themetxt", sizeof(".themetxt") - 1) == 0) {
-        build_theme(argv[1], &memory_volatile);
-        printf("\x1b[32mCreated theme %s\x1b[0m\n", argv[1]);
+        build_theme(argv_path, &memory_volatile);
+        printf("\x1b[32mCreated theme %s\x1b[0m\n", argv_path);
     } else if (strncmp(extension, ".layouttxt", sizeof(".layouttxt") - 1) == 0) {
-        build_layout(argv[1], &memory_volatile);
-        printf("\x1b[32mCreated layout %s\x1b[0m\n", argv[1]);
+        build_layout(argv_path, &memory_volatile);
+        printf("\x1b[32mCreated layout %s\x1b[0m\n", argv_path);
     } else {
-        printf("\x1b[31mUnsupported file extension %s\x1b[0m\n", argv[1]);
+        printf("\x1b[31mUnsupported file extension %s\x1b[0m\n", argv_path);
     }
 
     return 0;

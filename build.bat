@@ -1,3 +1,6 @@
+@echo off
+setlocal enabledelayedexpansion
+
 set "EXE_NAME=theme_builder"
 set "DESTINATION_DIR=..\build\theme_builder"
 
@@ -12,27 +15,27 @@ if "%Platform%" neq "x64" (
 )
 
 cd "%DESTINATION_DIR%"
-del *.pdb > NUL 2> NUL
-del *.idb > NUL 2> NUL
-cd ..\..\ThemeBuilder
+del *.pdb /F /Q > NUL 2> NUL
+del *.idb /F /Q > NUL 2> NUL
+cd "..\..\ThemeBuilder"
 
 REM Use /showIncludes for include debugging
 
-set BUILD_TYPE=DEBUG
-set BUILD_FLAGS=/Od /Z7 /WX /FC /RTC1 /DDEBUG
+set "BUILD_TYPE=DEBUG"
+set "BUILD_FLAGS=/Od /Z7 /WX /FC /RTC1 /DDEBUG"
 
 set "DEBUG_DATA=/Fd"%DESTINATION_DIR%\%EXE_NAME%.pdb" /Fm"%DESTINATION_DIR%\%EXE_NAME%.map""
 
 REM Parse command-line arguments
 if "%1"=="-r" (
-    set BUILD_TYPE=RELEASE
-    set BUILD_FLAGS=/O2 /D NDEBUG
+    set "BUILD_TYPE=RELEASE"
+    set "BUILD_FLAGS=/O2 /D NDEBUG"
 
-    set DEBUG_DATA=
+    set "DEBUG_DATA="
 )
 if "%1"=="-d" (
-    set BUILD_TYPE=DEBUG
-    set BUILD_FLAGS=/Od /Z7 /WX /FC /RTC1 /DDEBUG
+    set "BUILD_TYPE=DEBUG"
+    set "BUILD_FLAGS=/Od /Z7 /WX /FC /RTC1 /DDEBUG"
 
     set "DEBUG_DATA=/Fd"%DESTINATION_DIR%\%EXE_NAME%.pdb" /Fm"%DESTINATION_DIR%\%EXE_NAME%.map""
 )
@@ -49,3 +52,12 @@ cl ^
     /link /INCREMENTAL:no ^
     /SUBSYSTEM:CONSOLE /MACHINE:X64 ^
     kernel32.lib user32.lib gdi32.lib winmm.lib
+
+if errorlevel 1 (
+    echo ERROR: %EXE_NAME% compile/link failed
+    endlocal
+    exit /b 1
+)
+
+endlocal
+exit /b 0
